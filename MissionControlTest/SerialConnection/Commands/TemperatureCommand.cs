@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text;
 using MissionControl.Definitions;
 
 namespace MissionControl.SerialConnection.Commands
@@ -10,6 +11,15 @@ namespace MissionControl.SerialConnection.Commands
         public TemperatureCommand(short temperature) : base(CommandId.Temperature, BitConverter.GetBytes(temperature))
         {
             this.temperature = temperature;
+        }
+
+
+        public override string ToString()
+        {
+            StringBuilder builder = new StringBuilder();
+            builder.Append(base.ToString());
+            builder.Append($", Temperature: {temperature}\n");
+            return builder.ToString();
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using MissionControl.Definitions;
 using MissionControl.SerialConnection.Frame;
 
@@ -46,6 +47,11 @@ namespace MissionControl.SerialConnection.Commands
             throw new NotImplementedException();
         }
 
-        
+        public override string ToString()
+        {
+            StringBuilder builder = new StringBuilder();
+            builder.Append(Info);
+            return builder.ToString();
+        }
     }
 }

@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.Threading;
+﻿using System.Diagnostics.CodeAnalysis;
 using MissionControl.Definitions;
 using MissionControl.SerialConnection.Frame;
 using MissionControl.SerialConnection.Simulation;
@@ -12,9 +9,7 @@ namespace MissionControl.SerialConnection
     [SuppressMessage("Interoperability", "CA1416:Validate platform compatibility")]
     public class TelemetryConnectionManager : IDisposable
     {
-        public delegate void HandlePackage(Package package, SerialPortSource source);
-
-        private GroundConnectionManager.HandlePackage _handlePackage;
+        private readonly Action<Package, SerialPortSource> _handlePackage;
 
 
         private readonly Queue<Package> _telemetryQueue = new Queue<Package>();
@@ -35,14 +30,16 @@ namespace MissionControl.SerialConnection
         private bool _shouldRun = true;
 
 
-        public TelemetryConnectionManager(GroundConnectionManager.HandlePackage handlePackage)
+        public TelemetryConnectionManager(Action<Package, SerialPortSource> handlePackage)
         {
             _handlePackage = handlePackage;
 
 
             _telemetryReader = new SerialPortReader(SerialPortManager.GetSerialPort(SerialPortSource.Telemetry),
                 _telemetryReaderEvent, new Parser(_telemetryQueue));
-            
+            _telemetrySimulator =
+                new SerialPortReaderSimulator(_telemetryReaderSimulatorEvent, _telemetryQueue);
+
             _telemetryReaderThread = new Thread(_telemetryReader.Run);
         }
 
@@ -56,12 +53,11 @@ namespace MissionControl.SerialConnection
                 {
                     (Package package, SerialPortSource source) = _internalQueue.Dequeue();
 
-
                     //TODO Add Ack and resend functionality here. 
-                    if (package.Header.IsAck)
-                    {
-                        //Ack Manager to something
-                    }
+                    // if (package.Header.IsAck)
+                    // {
+                    //     //Ack Manager to something
+                    // }
 
                     _handlePackage(package, source);
                 }
@@ -80,9 +76,9 @@ namespace MissionControl.SerialConnection
                     _internalQueue.Enqueue(new Tuple<Package, SerialPortSource>(_telemetryQueue.Dequeue(),
                         SerialPortSource.Telemetry));
                 }
-            }
 
-            Monitor.PulseAll(_telemetryQueue);
+                Monitor.PulseAll(_telemetryQueue);
+            }
         }
 
         /// <summary>
@@ -91,7 +87,7 @@ namespace MissionControl.SerialConnection
         /// <param name="isSimulation">Signals to stop simulation thread. Default false.</param>
         public void Open(bool isSimulation = false)
         {
-            if (isSimulation)
+            if (isSimulation == false)
             {
                 SerialPortManager.GetSerialPort(SerialPortSource.Telemetry).Open();
                 _telemetryReaderEvent.Set();
@@ -161,8 +157,7 @@ namespace MissionControl.SerialConnection
         public void UseSimulation()
         {
             _telemetryReader.Stop();
-            _telemetrySimulator =
-                new SerialPortReaderSimulator(_telemetryReaderSimulatorEvent, _telemetryQueue);
+
             _telemetryReaderThread = new Thread(_telemetrySimulator.Run);
             _telemetryReaderThread.Start();
         }

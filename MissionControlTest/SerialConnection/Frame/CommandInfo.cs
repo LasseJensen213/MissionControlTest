@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text;
 using MissionControl.Definitions;
 
 namespace MissionControl.SerialConnection.Frame
@@ -58,6 +59,16 @@ namespace MissionControl.SerialConnection.Frame
             return size;
         }
 
+        public override string ToString()
+        {
+            StringBuilder builder = new StringBuilder();
+            builder.Append('{');
+            builder.Append($"CommandId: {Id}, ");
+            builder.Append($"Type: {Type}, ");
+            builder.Append($"IsAcknowledged: {IsAcknowledged}");
+            builder.Append('}');
 
-    }
+            return builder.ToString();
+        }
+    }   
 }

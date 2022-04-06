@@ -13,9 +13,7 @@ namespace MissionControl.SerialConnection
     [SuppressMessage("Interoperability", "CA1416:Validate platform compatibility")]
     public class GroundConnectionManager : IDisposable
     {
-        public delegate void HandlePackage(Package package, SerialPortSource source);
-
-        private HandlePackage _handlePackage;
+        private readonly Action<Package, SerialPortSource> _handlePackage;
 
 
         private readonly Queue<Package> _groundQueue = new Queue<Package>();
@@ -42,7 +40,7 @@ namespace MissionControl.SerialConnection
         private bool _shouldRun = true;
 
 
-        public GroundConnectionManager(HandlePackage handlePackage)
+        public GroundConnectionManager(Action<Package, SerialPortSource> handlePackage)
         {
             _handlePackage = handlePackage;
 
@@ -51,6 +49,7 @@ namespace MissionControl.SerialConnection
                 _groundReaderEvent, new Parser(_groundQueue));
             _groundWriter = new SerialPortWriter(SerialPortManager.GetSerialPort(SerialPortSource.Ground),
                 _groundWriterEvent, _commandQueue);
+            _groundSimulator = new SerialPortReaderSimulator(_groundReaderSimulatorEvent, _groundQueue);
 
 
             //TODO Create Ack thread

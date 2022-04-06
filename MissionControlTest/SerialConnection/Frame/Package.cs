@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text;
 using MissionControl.Definitions;
 using MissionControl.SerialConnection.Commands;
 using MissionControl.Utils;
@@ -71,6 +72,20 @@ namespace MissionControl.SerialConnection.Frame
             List<byte> commandData = payload.GetRange(index, commandLength);
             index += commandLength;
             return commandData;
+        }
+
+
+        public override string ToString()
+        {
+            StringBuilder builder = new StringBuilder();
+            builder.Append(Header);
+            foreach (Command command in _commands)
+            {
+                builder.Append(command);
+                builder.Append(", ");
+            }
+
+            return builder.ToString();
         }
     }
 }

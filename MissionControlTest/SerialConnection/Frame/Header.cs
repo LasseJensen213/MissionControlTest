@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text;
 using MissionControl.Definitions;
 using Serilog;
 
@@ -45,5 +46,17 @@ namespace MissionControl.SerialConnection.Frame
             PackageSize = HeaderLength + PayloadLength + EndTag.Length;
         }
 
+        public override string ToString()
+        {
+            StringBuilder builder = new StringBuilder();
+
+            builder.Append("Header: , ");
+            builder.Append($"Crc: {Crc}, ");
+            builder.Append($"IsAck: {IsAck}, ");
+            builder.Append($"CommandId: {CommandId}, ");
+            builder.Append($"PayloadLength: {PayloadLength}\n");
+
+            return builder.ToString();
+        }
     }
 }

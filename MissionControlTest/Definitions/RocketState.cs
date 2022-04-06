@@ -1,7 +1,7 @@
 ﻿namespace MissionControl.Definitions;
 
 [Flags]
-public enum RocketStates : byte
+public enum RocketState : byte
 {
     Idle = 0,
     PreFillCheck = 1,

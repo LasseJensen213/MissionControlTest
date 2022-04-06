@@ -14,7 +14,7 @@ namespace MissionControl.SerialConnection.Simulation
         private short _temperature = 1000;
 
 
-        private bool Running { get; set; }
+        private bool Running { get; set; } = true;
 
 
         public SerialPortReaderSimulator(AutoResetEvent resetEvent,Queue<Package> packageQueue)

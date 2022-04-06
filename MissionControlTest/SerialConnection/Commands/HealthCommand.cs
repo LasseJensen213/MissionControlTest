@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.Text;
 using MissionControl.Definitions;
 
 namespace MissionControl.SerialConnection.Commands
@@ -23,6 +24,15 @@ namespace MissionControl.SerialConnection.Commands
                 "HealthCommand: Payload length not equal to Command Length");
 
             Mask = (BoardMask) BitConverter.ToUInt16(Payload.ToArray(), 0);
+        }
+
+
+        public override string ToString()
+        {
+            StringBuilder builder = new StringBuilder();
+            builder.Append(base.ToString());
+            builder.Append($", Mask: {Mask}");
+            return builder.ToString();
         }
     }
 }
