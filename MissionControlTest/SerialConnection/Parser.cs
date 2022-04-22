@@ -63,8 +63,9 @@ namespace MissionControl.SerialConnection
                         _header = new Header(_buffer);
                     }
 
+                    if (_header == null) continue;
 
-                    //When we've received the full package, check if we have received the end-tag as well. 
+                        //When we've received the full package, check if we have received the end-tag as well. 
                     if (IsFence(Header.EndTag) && _buffer.Count == _header.PackageSize)
                     {
                         //We now have a complete and correct package. 

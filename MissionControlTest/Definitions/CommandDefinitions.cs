@@ -18,7 +18,7 @@ namespace MissionControl.Definitions
         {
             Commands = new Dictionary<CommandId, CommandInfo>();
             InsertCommand(new CommandInfo(CommandId.RocketState, typeof(byte), false));
-            InsertCommand(new CommandInfo(Stackhealth, typeof(ushort), false));
+            InsertCommand(new CommandInfo(StackHealth, typeof(ushort), false));
             InsertCommand(new CommandInfo(BoardMessages, 11, false));
             InsertCommand(new CommandInfo(Time, typeof(int), false));
             InsertCommand(new CommandInfo(Temperature, typeof(int), false));

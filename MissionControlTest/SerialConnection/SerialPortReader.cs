@@ -15,7 +15,7 @@ namespace MissionControl.SerialConnection
         private readonly Parser _parser;
 
 
-        private bool Running { get; set; }
+        private bool Running { get; set; } = true;
 
 
         public SerialPortReader(SerialPort serialPort, AutoResetEvent resetEvent, Parser parser)

@@ -41,6 +41,7 @@ namespace MissionControl.SerialConnection
                 new SerialPortReaderSimulator(_telemetryReaderSimulatorEvent, _telemetryQueue);
 
             _telemetryReaderThread = new Thread(_telemetryReader.Run);
+            _telemetryReaderThread.Start();
         }
 
 

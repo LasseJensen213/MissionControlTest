@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.Threading;
+﻿using System.Diagnostics.CodeAnalysis;
 using MissionControl.Definitions;
 using MissionControl.SerialConnection.Commands;
 using MissionControl.SerialConnection.Frame;
@@ -70,10 +67,10 @@ namespace MissionControl.SerialConnection
 
 
                     //TODO Add Ack and resend functionality here. 
-                    if (package.Header.IsAck)
-                    {
+                    //if (package.Header.IsAck)
+                    //{
                         //Ack Manager to something
-                    }
+                    //}
 
                     _handlePackage(package, source);
                 }
@@ -92,9 +89,9 @@ namespace MissionControl.SerialConnection
                     _internalQueue.Enqueue(
                         new Tuple<Package, SerialPortSource>(_groundQueue.Dequeue(), SerialPortSource.Ground));
                 }
-            }
 
-            Monitor.PulseAll(_groundQueue);
+                Monitor.PulseAll(_groundQueue);
+            }
         }
 
 
@@ -115,9 +112,8 @@ namespace MissionControl.SerialConnection
             lock (_commandQueue)
             {
                 _commandQueue.Enqueue(command);
+                Monitor.PulseAll(_commandQueue);
             }
-
-            Monitor.PulseAll(_commandQueue);
         }
 
         /// <summary>
@@ -126,7 +122,7 @@ namespace MissionControl.SerialConnection
         /// <param name="isSimulation">Signals to stop simulation thread. Default false.</param>
         public void Open(bool isSimulation = false)
         {
-            if (isSimulation)
+            if (isSimulation == false)
             {
                 SerialPortManager.GetSerialPort(SerialPortSource.Ground).Open();
                 _groundReaderEvent.Set();
@@ -147,7 +143,7 @@ namespace MissionControl.SerialConnection
         /// <param name="isSimulation">Signals to stop simulation thread. Default false.</param>
         public void Close(SerialPortSource source, bool isSimulation = false)
         {
-            if (isSimulation)
+            if (isSimulation == false)
             {
                 SerialPortManager.GetSerialPort(source).Close();
                 _groundReaderEvent.Set();
@@ -166,7 +162,7 @@ namespace MissionControl.SerialConnection
         /// <param name="isSimulation">Signals to stop simulation thread. Default false.</param>
         public void Stop(bool isSimulation = false)
         {
-            if (isSimulation)
+            if (isSimulation == false)
             {
                 _groundReader.Stop();
                 _groundWriter.Stop();

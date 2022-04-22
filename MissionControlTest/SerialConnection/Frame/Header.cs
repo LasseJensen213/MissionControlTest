@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using MissionControl.Definitions;
+using MissionControl.Utils;
 using Serilog;
 
 namespace MissionControl.SerialConnection.Frame
@@ -20,9 +21,9 @@ namespace MissionControl.SerialConnection.Frame
         private const int CrcPosition = 0;
         private const int IsAckPosition = 2;
         private const int CommandIdPosition = 3;
-        private const int PayloadLengthPosition = 5;
+        private const int PayloadLengthPosition = 4;
 
-        public const int HeaderLength = 7;
+        public const int HeaderLength = 6;
         public const int CrcSize = 2;
 
         public ushort Crc;
@@ -39,9 +40,10 @@ namespace MissionControl.SerialConnection.Frame
                 return;
             }
             
-            Crc = BitConverter.ToUInt16(payload.ToArray(), CrcPosition);
+            Crc = BitConverter.ToUInt16(payload.ToArray().SubArray(CrcPosition, sizeof(UInt16)), CrcPosition);
+            payload.ToArray();
             IsAck = BitConverter.ToBoolean(payload.ToArray(), IsAckPosition);
-            CommandId = (CommandId) BitConverter.ToUInt16(payload.ToArray(), CommandIdPosition);
+            CommandId = (CommandId) payload.ToArray()[CommandIdPosition];
             PayloadLength = BitConverter.ToUInt16(payload.ToArray(), PayloadLengthPosition);
             PackageSize = HeaderLength + PayloadLength + EndTag.Length;
         }
@@ -58,5 +60,7 @@ namespace MissionControl.SerialConnection.Frame
 
             return builder.ToString();
         }
+        
+       
     }
 }
